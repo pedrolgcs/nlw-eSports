@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { API_BASE_URL } from '@/constants/environments';
 
 const axiosCreateInstance = (
   callback: (axiosInstance: AxiosInstance) => AxiosInstance
@@ -15,7 +16,7 @@ const axiosCreateInstance = (
 
 export const api = axiosCreateInstance((axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.request.use((config) => {
-    config.baseURL = 'http://localhost:3333';
+    config.baseURL = API_BASE_URL;
     return config;
   });
 

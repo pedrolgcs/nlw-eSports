@@ -1,17 +1,7 @@
-import * as React from 'react';
-import { MagnifyingGlassPlus } from 'phosphor-react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { GameCard, CreateNewAdModal } from '@/components';
+import { GameCard, CreateAdBanner } from '@/components';
 import { useGamesQuery } from '@/hooks/queries';
 
 function Home() {
-  const [visibleCreateNewAdModal, setVisibleCreateNewAdModal] =
-    React.useState(false);
-
-  const toggleVisibleCreateNewAdModal = () => {
-    setVisibleCreateNewAdModal(!visibleCreateNewAdModal);
-  };
-
   const { data: games } = useGamesQuery();
 
   return (
@@ -20,7 +10,7 @@ function Home() {
 
       <h1 className="text-6xl text-white font-black mt-20">
         Seu
-        <span className="bg-nwl-gradient bg-clip-text text-transparent px-2">
+        <span className="bg-clip-text text-transparent px-3 bg-gradient-to-r from-[#9572FC] via-[#43E7AD] to-[#E1D55D]">
           duo
         </span>
         está aqui
@@ -32,31 +22,7 @@ function Home() {
         ))}
       </div>
 
-      <div className="bg-[#2a2634] px-8 py-6 mt-8 self-stretch rounded-lg border-t-4 border-gradient-r-nwl-gradient flex items-center justify-between">
-        <div className="flex flex-col">
-          <strong className="text-2xl text-white font-black">
-            Não encontrou seu duo?
-          </strong>
-          <span className="text-zinc-400">
-            Publique um anúncio para encontrar novos players!
-          </span>
-        </div>
-
-        <button
-          onClick={toggleVisibleCreateNewAdModal}
-          className="py-3 px-4 bg-violet-500 text-white flex gap-3 rounded-md hover:bg-violet-600 transition duration-300"
-        >
-          <MagnifyingGlassPlus weight="light" size={24} />
-          Publicar anúncio
-        </button>
-      </div>
-
-      <Dialog.Root
-        open={visibleCreateNewAdModal}
-        onOpenChange={toggleVisibleCreateNewAdModal}
-      >
-        <CreateNewAdModal toggleModal={toggleVisibleCreateNewAdModal} />
-      </Dialog.Root>
+      <CreateAdBanner />
     </div>
   );
 }
