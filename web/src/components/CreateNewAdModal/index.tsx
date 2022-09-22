@@ -141,7 +141,7 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
                 render={({ field }) => (
                   <ToggleGroup.Root
                     type="multiple"
-                    className="flex gap-3"
+                    className="flex gap-2"
                     value={field.value}
                     onValueChange={field.onChange}
                     defaultValue={[]}
