@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* react select */
+@layer components {
+  /* .my-react-select-container {
+  } */
+  .my-react-select-container .my-react-select__control {
+    @apply bg-zinc-900 border-2 border-none;
+  }
+
+  .my-react-select-container
+    .my-react-select__control
+    .my-react-select__placeholder {
+    @apply text-zinc-500;
+  }
+
+  .my-react-select-container .my-react-select__control--is-focused {
+    @apply border-zinc-100 hover:border-zinc-500 shadow-none;
+  }
+
+  .my-react-select-container .my-react-select__menu {
+    @apply bg-zinc-900 border-2 border-none;
+  }
+
+  .my-react-select-container .my-react-select__option {
+    @apply text-white bg-zinc-900 hover:bg-zinc-800;
+  }
+  /* .my-react-select-container .my-react-select__option--is-focused {
+    @apply bg-neutral-200 dark:bg-neutral-800;
+  } */
+
+  .my-react-select-container .my-react-select__indicator-separator {
+    @apply bg-zinc-900 text-violet-200;
+  }
+
+  .my-react-select-container
+    .my-react-select__control
+    .my-react-select__indicators
+    .my-react-select__dropdown-indicator {
+    @apply text-zinc-500 hover:text-zinc-400;
+  }
+
+  .my-react-select-container .my-react-select__input-container,
+  .my-react-select-container .my-react-select__placeholder,
+  .my-react-select-container .my-react-select__single-value {
+    @apply text-white;
+  }
+}

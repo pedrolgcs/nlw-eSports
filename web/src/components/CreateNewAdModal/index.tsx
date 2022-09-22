@@ -1,14 +1,64 @@
+import * as React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as zod from 'zod';
 import { GameController } from 'phosphor-react';
-import { Input } from '@/components';
+import { TextField, Select, Checkbox } from '@/components';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useGamesQuery } from '@/hooks/queries';
+
+const newAdSchema = zod.object({
+  game: zod.object({
+    label: zod.string(),
+    value: zod.string(),
+  }),
+  name: zod.string(),
+  yearsPlaying: zod.string(),
+  discord: zod.string(),
+  weekDays: zod.string().array(),
+  hourStart: zod.string(),
+  hourEnd: zod.string(),
+  useVoiceChannel: zod.boolean(),
+});
+
+type NewAdSchema = zod.infer<typeof newAdSchema>;
 
 type CreateNewAdModalProps = {
   toggleModal: () => void;
 };
 
 function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
-  const handleCreateNewAd = () => {
-    toggleModal();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<NewAdSchema>({
+    resolver: zodResolver(newAdSchema),
+    defaultValues: {
+      name: '',
+      discord: '',
+      hourStart: '00:00',
+      hourEnd: '00:00',
+      weekDays: [],
+      useVoiceChannel: false,
+      yearsPlaying: '0',
+      game: undefined,
+    },
+  });
+
+  const { data: games } = useGamesQuery();
+
+  const selectGameOptions = React.useMemo(() => {
+    return games?.map((game) => ({
+      label: game.title,
+      value: game.id,
+    }));
+  }, [games]);
+
+  const handleCreateNewAd: SubmitHandler<NewAdSchema> = (data) => {
+    console.log(data);
   };
 
   return (
@@ -20,16 +70,25 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
           Publique um anúncio
         </Dialog.Title>
 
-        <form onSubmit={handleCreateNewAd} className="mt-8 flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit(handleCreateNewAd)}
+          className="mt-8 flex flex-col gap-4"
+        >
           <div className="flex flex-col gap-2">
             <label htmlFor="game" className="font-semibold">
               Qual o game?
             </label>
 
-            <Input
-              id="game"
-              type="text"
-              placeholder="Selecione o game que deseja jogar"
+            <Controller
+              name="game"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={selectGameOptions}
+                  placeholder="Selecione o game que deseja jogar"
+                  {...field}
+                />
+              )}
             />
           </div>
 
@@ -37,22 +96,23 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
             <label htmlFor="name" className="font-semibold">
               Seu nome (ou nickname)
             </label>
-            <Input
-              id="name"
+            <TextField
               type="text"
               placeholder="Como te chamam dentro do game?"
+              {...register('name')}
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-2">
             <div className=" flex flex-col gap-2">
               <label htmlFor="yearsPlaying" className="font-semibold">
                 Joga a quantos anos?
               </label>
-              <Input
+              <TextField
                 id="yearsPlaying"
                 type="number"
                 placeholder="Tudo bem ser ZERO"
+                {...register('yearsPlaying')}
               />
             </div>
 
@@ -60,82 +120,148 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
               <label htmlFor="discord" className="font-semibold">
                 Qual o seu discord?
               </label>
-              <Input id="discord" type="text" placeholder="Usuario#0000" />
+              <TextField
+                id="discord"
+                type="text"
+                placeholder="Usuario#0000"
+                {...register('discord')}
+              />
             </div>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex gap-2">
             <div className="flex flex-col gap-2">
               <label htmlFor="weekDays" className="font-semibold">
                 Quando costuma jogar?
               </label>
 
-              <div className="grid grid-cols-4 gap-2">
-                <button
-                  type="button"
-                  title="Domingo"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  D
-                </button>
-                <button
-                  type="button"
-                  title="Segunda"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  S
-                </button>
-                <button
-                  type="button"
-                  title="Terça"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  T
-                </button>
-                <button
-                  type="button"
-                  title="Quarta"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  Q
-                </button>
-                <button
-                  type="button"
-                  title="Quinta"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  Q
-                </button>
-                <button
-                  type="button"
-                  title="Sexta"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  S
-                </button>
-                <button
-                  type="button"
-                  title="Sábado"
-                  className="w-8 h-8 rounded bg-zinc-900 "
-                >
-                  S
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 flex-1">
-              <label htmlFor="hourStart" className="font-semibold">
-                Qual horário do dia?
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <Input id="hourStart" type="time" placeholder="De" />
-                <Input id="hourEnd" type="time" placeholder="Até" />
-              </div>
+              <Controller
+                name="weekDays"
+                control={control}
+                render={({ field }) => (
+                  <ToggleGroup.Root
+                    type="multiple"
+                    className="flex gap-3"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    defaultValue={[]}
+                  >
+                    <ToggleGroup.Item
+                      value="0"
+                      title="Domingo"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('0')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      D
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="1"
+                      title="Segunda"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('1')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      S
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="2"
+                      title="Terça"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('2')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      T
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="3"
+                      title="Quarta"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('3')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      Q
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="4"
+                      title="Quinta"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('4')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      Q
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="5"
+                      title="Sexta"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('5')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      S
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      value="6"
+                      title="Sábado"
+                      className={`w-8 h-8 rounded ${
+                        field.value?.includes('6')
+                          ? 'bg-violet-500'
+                          : 'bg-zinc-900'
+                      }`}
+                    >
+                      S
+                    </ToggleGroup.Item>
+                  </ToggleGroup.Root>
+                )}
+              />
             </div>
           </div>
 
-          <div className="flex gap-2 text-sm">
-            <Input type="checkbox" />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="hourStart" className="font-semibold">
+              Qual horário do dia?
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <TextField
+                id="hourStart"
+                type="time"
+                placeholder="De"
+                {...register('hourStart')}
+              />
+              <TextField
+                id="hourEnd"
+                type="time"
+                placeholder="Até"
+                {...register('hourEnd')}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 text-sm items-center">
+            <Controller
+              name="useVoiceChannel"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  {...field}
+                  defaultValue={0}
+                  onCheckedChange={field.onChange}
+                  value={field.value ? 1 : 0}
+                />
+              )}
+            />
             Costumo me conectar ao chat de voz
           </div>
 
