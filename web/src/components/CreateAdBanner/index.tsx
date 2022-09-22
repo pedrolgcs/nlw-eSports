@@ -22,18 +22,18 @@ function CreateAdBanner() {
         </span>
       </div>
 
-      <button
-        onClick={toggleVisibleCreateNewAdModal}
-        className="py-3 px-4 bg-violet-500 text-white flex gap-3 rounded-md hover:bg-violet-600 transition duration-300"
-      >
-        <MagnifyingGlassPlus weight="light" size={24} />
-        Publicar anúncio
-      </button>
-
       <Dialog.Root
         open={visibleCreateNewAdModal}
-        onOpenChange={toggleVisibleCreateNewAdModal}
+        onOpenChange={setVisibleCreateNewAdModal}
       >
+        <Dialog.Trigger
+          onClick={toggleVisibleCreateNewAdModal}
+          className="py-3 px-4 bg-violet-500 text-white flex gap-3 rounded-md hover:bg-violet-600 transition duration-300"
+        >
+          <MagnifyingGlassPlus weight="light" size={24} />
+          Publicar anúncio
+        </Dialog.Trigger>
+
         <CreateNewAdModal toggleModal={toggleVisibleCreateNewAdModal} />
       </Dialog.Root>
     </div>
