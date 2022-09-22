@@ -2,39 +2,18 @@ import * as React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as zod from 'zod';
 import { GameController } from 'phosphor-react';
 import { TextField, Select, Checkbox } from '@/components';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useGamesQuery } from '@/hooks/queries';
-
-const newAdSchema = zod.object({
-  game: zod.object({
-    label: zod.string(),
-    value: zod.string(),
-  }),
-  name: zod.string(),
-  yearsPlaying: zod.string(),
-  discord: zod.string(),
-  weekDays: zod.string().array(),
-  hourStart: zod.string(),
-  hourEnd: zod.string(),
-  useVoiceChannel: zod.boolean(),
-});
-
-type NewAdSchema = zod.infer<typeof newAdSchema>;
+import { newAdSchema, NewAdSchema } from './schemaValidation';
 
 type CreateNewAdModalProps = {
   toggleModal: () => void;
 };
 
 function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<NewAdSchema>({
+  const { register, handleSubmit, control } = useForm<NewAdSchema>({
     resolver: zodResolver(newAdSchema),
     defaultValues: {
       name: '',
