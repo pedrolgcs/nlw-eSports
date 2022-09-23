@@ -12,3 +12,22 @@ export async function getAdById({ id }: GetAdByIdParams) {
 
   return normalizedAds;
 }
+
+type CreateNewAdParams = {
+  name: string;
+  yearsPlaying: number;
+  discord: string;
+  weekDays: number[];
+  hourStart: number;
+  hourEnd: number;
+  useVoiceChannel: boolean;
+  gameId: string;
+};
+
+export async function createNewAd(params: CreateNewAdParams) {
+  const { data: ad } = await api.post<IAd>('/ads', params);
+
+  const normalizedAd = new Ad(ad);
+
+  return normalizedAd;
+}

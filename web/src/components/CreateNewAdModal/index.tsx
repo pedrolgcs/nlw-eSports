@@ -3,9 +3,12 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GameController } from 'phosphor-react';
-import { TextField, Select, Checkbox } from '@/components';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { TextField, Select, Checkbox } from '@/components';
 import { useGamesQuery } from '@/hooks/queries';
+import { useMutationCreateNewAd } from '@/hooks/mutations/useAdMutations';
+import { convertH2M } from '@/utils/date';
 import { newAdSchema, NewAdSchema } from './schemaValidation';
 
 type CreateNewAdModalProps = {
@@ -13,6 +16,8 @@ type CreateNewAdModalProps = {
 };
 
 function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
+  const { mutateAsync: createNewAd } = useMutationCreateNewAd();
+
   const { register, handleSubmit, control } = useForm<NewAdSchema>({
     resolver: zodResolver(newAdSchema),
     defaultValues: {
@@ -37,7 +42,25 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
   }, [games]);
 
   const handleCreateNewAd: SubmitHandler<NewAdSchema> = (data) => {
-    console.log(data);
+    const parsedData = {
+      name: data.name,
+      yearsPlaying: Number(data.yearsPlaying),
+      discord: data.discord,
+      weekDays: data.weekDays.map((day) => Number(day)),
+      hourStart: convertH2M(data.hourStart),
+      hourEnd: convertH2M(data.hourEnd),
+      useVoiceChannel: data.useVoiceChannel,
+      gameId: data.game.value,
+    };
+
+    toast.promise(createNewAd(parsedData), {
+      loading: 'Salvando...',
+      success: () => {
+        toggleModal();
+        return <b>Anúncio cadastro com sucesso!</b>;
+      },
+      error: <b>Erro ao cadastrar anúncio!</b>,
+    });
   };
 
   return (
@@ -51,6 +74,7 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
 
         <form
           onSubmit={handleSubmit(handleCreateNewAd)}
+          autoComplete="off"
           className="mt-8 flex flex-col gap-4"
         >
           <div className="flex flex-col gap-2">
@@ -237,7 +261,7 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
                   {...field}
                   defaultValue={0}
                   onCheckedChange={field.onChange}
-                  value={field.value ? 1 : 0}
+                  value={Number(field.value)}
                 />
               )}
             />

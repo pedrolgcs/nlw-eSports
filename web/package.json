@@ -19,6 +19,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.36.0",
+    "react-hot-toast": "^2.4.0",
     "react-router-dom": "^6.4.0",
     "react-select": "^5.4.0",
     "tailwindcss-border-gradients": "^2.0.3",

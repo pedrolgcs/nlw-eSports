@@ -5,7 +5,7 @@ export type IAd = {
   weekDays: number[];
   hourStart: number;
   hourEnd: number;
-  useVoiceChannel: true;
+  useVoiceChannel: boolean;
   gameId: string;
   createdAt: string;
 };
@@ -17,7 +17,7 @@ class Ad {
   readonly weekDays: number[];
   readonly hourStart: number;
   readonly hourEnd: number;
-  readonly useVoiceChannel: true;
+  readonly useVoiceChannel: boolean;
   readonly gameId: string;
   readonly createdAt: Date;
 
