@@ -1,4 +1,4 @@
-import { GameCard, CreateAdBanner } from '@/components';
+import { GameCard, CreateAdBanner, Slider } from '@/components';
 import { useGamesQuery } from '@/hooks/queries';
 
 function Home() {
@@ -16,11 +16,15 @@ function Home() {
         está aqui
       </h1>
 
-      <div className="grid grid-cols-6 gap-6 mt-16">
-        {games?.map((game) => (
-          <GameCard game={game} key={game.id} />
-        ))}
-      </div>
+      {games && games.length > 0 && (
+        <div className="mt-16 m-auto w-full">
+          <Slider>
+            {games?.map((game) => (
+              <GameCard game={game} key={game.id} />
+            ))}
+          </Slider>
+        </div>
+      )}
 
       <CreateAdBanner />
     </div>
