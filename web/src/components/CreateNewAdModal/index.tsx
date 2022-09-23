@@ -252,7 +252,7 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
             </div>
           </div>
 
-          <div className="flex gap-2 text-sm items-center">
+          <label className="flex gap-2 text-sm items-center">
             <Controller
               name="useVoiceChannel"
               control={control}
@@ -266,7 +266,7 @@ function CreateNewAdModal({ toggleModal }: CreateNewAdModalProps) {
               )}
             />
             Costumo me conectar ao chat de voz
-          </div>
+          </label>
 
           <footer className="mt-4 flex justify-end gap-4">
             <Dialog.Close
