@@ -1,3 +1,5 @@
+import { convertM2HM } from '@/utils/date';
+
 export type IAd = {
   id: string;
   name: string;
@@ -41,6 +43,14 @@ class Ad {
     this.useVoiceChannel = useVoiceChannel;
     this.gameId = gameId;
     this.createdAt = new Date(createdAt);
+  }
+
+  get formattedHourStart() {
+    return convertM2HM(this.hourStart);
+  }
+
+  get formattedHourEnd() {
+    return convertM2HM(this.hourEnd);
   }
 }
 
