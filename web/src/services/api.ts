@@ -4,6 +4,8 @@ import { API_BASE_URL } from '@/constants/environments';
 const axiosCreateInstance = (
   callback: (axiosInstance: AxiosInstance) => AxiosInstance
 ) => {
+  axios.defaults.withCredentials = true;
+
   const api = axios.create({
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
